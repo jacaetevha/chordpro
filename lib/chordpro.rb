@@ -15,7 +15,7 @@ module Chordpro
     HTML.new(Transform.new.apply(Parser.new.parse(string))).to_s
   end
 
-  def self.colorized(string)
-    Colorized.new(Transform.new.apply(Parser.new.parse(string))).to_s
+  def self.colorized(string, opts={})
+    Colorized.new(Transform.new.apply(Parser.new.parse(string)), opts).to_s
   end
 end
