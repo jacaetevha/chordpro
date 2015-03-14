@@ -25,6 +25,23 @@ module Chordpro
       super if @opts.fetch(:show_title, true)
     end
 
+    def subtitle(subtitle)
+      super if @opts.fetch(:show_title, true)
+    end
+
+    def linebreak(_)
+      # Don't show line breaks
+    end
+
+    def comment(text)
+      @html.tr do |tr|
+        tr.td(:colspan => 2) do |td|
+          td.span(text, :class => "comment")
+        end
+      end
+    end
+    alias_method :c, :comment
+
     def line(line, parse)
       lyrics = []
 
@@ -49,10 +66,13 @@ module Chordpro
 
         tr.td(:class => 'lyrics') do |td|
           lyrics.each do |lyric|
-            text = lyric.text.match(/(?<pre>\s*)(?<phrase>\S.*\S)(?<post>\s*)/)
-            td.span(text[:pre],    :class => "break") unless text[:pre].empty?
-            td.span(text[:phrase], :class => lyric.chord_class)
-            td.span(text[:post],   :class => "break") unless text[:post].empty?
+            if text = lyric.text.match(/(?<pre>\s*)(?<phrase>\S.*\S)(?<post>\s*)/)
+              td.span(text[:pre],    :class => "break") unless text[:pre].empty?
+              td.span(text[:phrase], :class => lyric.chord_class)
+              td.span(text[:post],   :class => "break") unless text[:post].empty?
+            else
+              td.span(lyric.text, :class => lyric.chord_class)
+            end
           end
         end
       end

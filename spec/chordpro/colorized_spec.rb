@@ -38,10 +38,36 @@ describe Chordpro::Colorized do
     )
   end
 
-  it "hides the title when specified" do
-    string = "{title: You Are My Sunshine}\n\n[G]You are my sunshine"
+  it "renders comments" do
+    string = "{c: Verse}\n[G]You are my sunshine"
     expect(colorized(string, :show_title => false).to_s).to eq(
-      '<br/>' +
+      '<tr>' +
+      '<td colspan="2"><span class="comment">Verse</span></td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td class="chord-list"><span class="chord-G">G</span></td>' +
+      '<td class="lyrics"><span class="chord-G">You are my sunshine</span></td>' +
+      '</tr>'
+    )
+  end
+
+  it "hides line breaks" do
+    string = "{title: You Are My Sunshine}\n\n" +
+             "[G]You are my sunshine"
+    expect(colorized(string).to_s).to eq(
+      '<h1 class="title">You Are My Sunshine</h1>' +
+      '<tr>' +
+      '<td class="chord-list"><span class="chord-G">G</span></td>' +
+      '<td class="lyrics"><span class="chord-G">You are my sunshine</span></td>' +
+      '</tr>'
+    )
+  end
+
+  it "hides the title and subtitle when specified" do
+    string = "{title: You Are My Sunshine}\n" +
+             "{subtitle: As performed on Oh Brother Where Art Thou?}\n\n" +
+             "[G]You are my sunshine"
+    expect(colorized(string, :show_title => false).to_s).to eq(
       '<tr>' +
       '<td class="chord-list"><span class="chord-G">G</span></td>' +
       '<td class="lyrics"><span class="chord-G">You are my sunshine</span></td>' +
