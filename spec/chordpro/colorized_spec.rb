@@ -38,6 +38,27 @@ describe Chordpro::Colorized do
     )
   end
 
+  it "renders lyric-less chord changes" do
+    expect(colorized("[G]I hung my[G7][D7]head and I [G]cried.[C]").to_s).to eq(
+      '<tr>' +
+      '<td class="chord-list">' +
+      '<span class="chord-G">G</span>' +
+      '<span class="chord-G⁷">G⁷</span>' +
+      '<span class="chord-D⁷">D⁷</span>' +
+      '<span class="chord-G">G</span>' +
+      '<span class="chord-C">C</span>' +
+      '</td>' +
+      '<td class="lyrics">' +
+      '<span class="chord-G">I hung my</span>' +
+      '<span class="chord-G⁷ beat">♫</span>' +
+      '<span class="chord-D⁷">head and I</span>' +
+      '<span class="chord-G">cried.</span>' +
+      '<span class="chord-C beat">♫</span>' +
+      '</td>' +
+      '</tr>'
+    )
+  end
+
   it "renders comments" do
     string = "{c: Verse}\n[G]You are my sunshine"
     expect(colorized(string, :show_title => false).to_s).to eq(

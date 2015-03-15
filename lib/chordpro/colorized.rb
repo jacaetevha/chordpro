@@ -1,5 +1,4 @@
 require 'builder'
-require 'set'
 
 module Chordpro
   class ChordedLyric
@@ -45,28 +44,35 @@ module Chordpro
     def line(line, parse)
       lyrics = []
 
-      line.each do |element|
+      # TODO: get line#select working here
+      elements = line.inject([]) do |els, e|
+        els << e if e.is_a?(Chord) || (e.is_a?(Lyric) && !e.to_s.strip.empty?)
+        els
+      end
+      return if elements.empty?
+
+      paired = elements.each_cons(2).to_a << [elements.last,nil]
+      paired.each do |element, following|
         if element.is_a?(Chord)
           @current_chord = element.to_s
+          lyrics << ChordedLyric.new(@current_chord, "") unless following.is_a?(Lyric)
         elsif element.is_a?(Lyric)
           lyrics << ChordedLyric.new(@current_chord, element.to_s.strip)
         end
       end
 
       @html.tr do |tr|
-        chord_list = lyrics.inject(Set.new) do |list, lyric|
-          list << [lyric.chord, lyric.chord_class] if lyric.chord
-          list
-        end
         tr.td(:class => 'chord-list') do |td|
-          chord_list.each do |chord, chord_class|
-            td.span(chord, :class => chord_class)
+          lyrics.select{|l| l.chord}.each do |lyric|
+            td.span(lyric.chord, :class => lyric.chord_class)
           end
         end
 
         tr.td(:class => 'lyrics') do |td|
           lyrics.each do |lyric|
-            if text = lyric.text.match(/(?<pre>\s*)(?<phrase>\S.*\S)(?<post>\s*)/)
+            if lyric.text.empty?
+              td.span("♫", :class => "#{lyric.chord_class} beat")
+            elsif text = lyric.text.match(/(?<pre>\s*)(?<phrase>\S.*\S)(?<post>\s*)/)
               td.span(text[:pre],    :class => "break") unless text[:pre].empty?
               td.span(text[:phrase], :class => lyric.chord_class)
               td.span(text[:post],   :class => "break") unless text[:post].empty?
