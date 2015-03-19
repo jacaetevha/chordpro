@@ -14,8 +14,8 @@ describe Chordpro::Colorized do
       '<span class="chord-G">G</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="chord-G⁷ break">I dreamed I</span>' +
-      '<span class="chord-C break">held you in my</span>' +
+      '<span class="chord-G⁷">I dreamed I</span>' +
+      '<span class="chord-C">held you in my</span>' +
       '<span class="chord-G">arms</span>' +
       '</td>' +
       '</tr>'
@@ -30,8 +30,8 @@ describe Chordpro::Colorized do
       '<span class="chord-G">G</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="silent break">I dreamed I</span>' +
-      '<span class="chord-C break">held you in my</span>' +
+      '<span class="silent">I dreamed I</span>' +
+      '<span class="chord-C">held you in my</span>' +
       '<span class="chord-G">arms</span>' +
       '</td>' +
       '</tr>'
@@ -47,8 +47,8 @@ describe Chordpro::Colorized do
       '<span class="chord-G">G</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="chord-G⁷ break">And no one</span>' +
-      '<span class="chord-C">else could come be</span>' +
+      '<span class="chord-G⁷">And no one</span>' +
+      '<span class="chord-C nobreak">else could come be</span>' +
       '<span class="chord-G">tween</span>' +
       '</td>' +
       '</tr>'
@@ -66,11 +66,11 @@ describe Chordpro::Colorized do
       '<span class="chord-C">C</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="chord-G break">I hung my</span>' +
-      '<span class="chord-G⁷ break beat">♫</span>' +
-      '<span class="chord-D⁷ break">head and I</span>' +
+      '<span class="chord-G">I hung my</span>' +
+      '<span class="chord-G⁷ beat">♫</span>' +
+      '<span class="chord-D⁷">head and I</span>' +
       '<span class="chord-G">cried.</span>' +
-      '<span class="chord-C break beat">♫</span>' +
+      '<span class="chord-C beat">♫</span>' +
       '</td>' +
       '</tr>'
     )

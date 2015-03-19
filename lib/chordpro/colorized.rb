@@ -3,12 +3,19 @@ require 'builder'
 module Chordpro
   class ChordedLyric
     attr_reader :chord
-    attr_accessor :breaks
 
     def initialize(chord, text)
       @breaks = text.empty? || text.end_with?(" ")
       @text   = text.strip
       @chord  = chord
+    end
+
+    def breaks?
+      @breaks
+    end
+
+    def breaks!
+      @breaks = true
     end
 
     def text
@@ -17,7 +24,7 @@ module Chordpro
 
     def text_class
       classes = [chord_class]
-      classes << "break" if breaks
+      classes << "nobreak" unless breaks?
       classes << "beat" if @text.empty?
       classes.join(" ")
     end
@@ -68,14 +75,18 @@ module Chordpro
       paired.each do |element, following|
         if element.is_a?(Chord)
           @current_chord = element.to_s
-          lyrics << ChordedLyric.new(@current_chord, "") unless following.is_a?(Lyric)
+          if !following.is_a?(Lyric)
+            lyrics.last.breaks! if lyrics.any?
+            lyrics << ChordedLyric.new(@current_chord, "")
+          end
         elsif element.is_a?(Lyric)
           if element.to_s.start_with?(" ") && lyrics.any?
-            lyrics.last.breaks = true
+            lyrics.last.breaks!
           end
           lyrics << ChordedLyric.new(@current_chord, element.to_s)
         end
       end
+      lyrics.last.breaks!
 
       @html.tr do |tr|
         tr.td(:class => 'chord-list') do |td|
