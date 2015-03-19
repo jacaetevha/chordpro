@@ -2,11 +2,24 @@ require 'builder'
 
 module Chordpro
   class ChordedLyric
-    attr_reader :chord, :text
+    attr_reader :chord
+    attr_accessor :breaks
 
     def initialize(chord, text)
-      @text  = text
-      @chord = chord
+      @breaks = text.empty? || text.end_with?(" ")
+      @text   = text.strip
+      @chord  = chord
+    end
+
+    def text
+      @text.empty?? "♫" : @text
+    end
+
+    def text_class
+      classes = [chord_class]
+      classes << "break" if breaks
+      classes << "beat" if @text.empty?
+      classes.join(" ")
     end
 
     def chord_class
@@ -57,7 +70,10 @@ module Chordpro
           @current_chord = element.to_s
           lyrics << ChordedLyric.new(@current_chord, "") unless following.is_a?(Lyric)
         elsif element.is_a?(Lyric)
-          lyrics << ChordedLyric.new(@current_chord, element.to_s.strip)
+          if element.to_s.start_with?(" ") && lyrics.any?
+            lyrics.last.breaks = true
+          end
+          lyrics << ChordedLyric.new(@current_chord, element.to_s)
         end
       end
 
@@ -70,15 +86,7 @@ module Chordpro
 
         tr.td(:class => 'lyrics') do |td|
           lyrics.each do |lyric|
-            if lyric.text.empty?
-              td.span("♫", :class => "#{lyric.chord_class} beat")
-            elsif text = lyric.text.match(/(?<pre>\s*)(?<phrase>\S.*\S)(?<post>\s*)/)
-              td.span(text[:pre],    :class => "break") unless text[:pre].empty?
-              td.span(text[:phrase], :class => lyric.chord_class)
-              td.span(text[:post],   :class => "break") unless text[:post].empty?
-            else
-              td.span(lyric.text, :class => lyric.chord_class)
-            end
+            td.span(lyric.text, :class => lyric.text_class)
           end
         end
       end

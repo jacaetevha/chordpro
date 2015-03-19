@@ -14,8 +14,8 @@ describe Chordpro::Colorized do
       '<span class="chord-G">G</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="chord-G⁷">I dreamed I</span>' +
-      '<span class="chord-C">held you in my</span>' +
+      '<span class="chord-G⁷ break">I dreamed I</span>' +
+      '<span class="chord-C break">held you in my</span>' +
       '<span class="chord-G">arms</span>' +
       '</td>' +
       '</tr>'
@@ -30,16 +30,33 @@ describe Chordpro::Colorized do
       '<span class="chord-G">G</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="silent">I dreamed I</span>' +
-      '<span class="chord-C">held you in my</span>' +
+      '<span class="silent break">I dreamed I</span>' +
+      '<span class="chord-C break">held you in my</span>' +
       '<span class="chord-G">arms</span>' +
       '</td>' +
       '</tr>'
     )
   end
 
+  it "styles changes inside a word with no break" do
+    expect(colorized("[G7]And no one [C]else could come be[G]tween").to_s).to eq(
+      '<tr>' +
+      '<td class="chord-list">' +
+      '<span class="chord-G⁷">G⁷</span>' +
+      '<span class="chord-C">C</span>' +
+      '<span class="chord-G">G</span>' +
+      '</td>' +
+      '<td class="lyrics">' +
+      '<span class="chord-G⁷ break">And no one</span>' +
+      '<span class="chord-C">else could come be</span>' +
+      '<span class="chord-G">tween</span>' +
+      '</td>' +
+      '</tr>'
+    )
+  end
+
   it "renders lyric-less chord changes" do
-    expect(colorized("[G]I hung my[G7][D7]head and I [G]cried.[C]").to_s).to eq(
+    expect(colorized("[G]I hung my [G7][D7]head and I [G]cried.[C]").to_s).to eq(
       '<tr>' +
       '<td class="chord-list">' +
       '<span class="chord-G">G</span>' +
@@ -49,11 +66,11 @@ describe Chordpro::Colorized do
       '<span class="chord-C">C</span>' +
       '</td>' +
       '<td class="lyrics">' +
-      '<span class="chord-G">I hung my</span>' +
-      '<span class="chord-G⁷ beat">♫</span>' +
-      '<span class="chord-D⁷">head and I</span>' +
+      '<span class="chord-G break">I hung my</span>' +
+      '<span class="chord-G⁷ break beat">♫</span>' +
+      '<span class="chord-D⁷ break">head and I</span>' +
       '<span class="chord-G">cried.</span>' +
-      '<span class="chord-C beat">♫</span>' +
+      '<span class="chord-C break beat">♫</span>' +
       '</td>' +
       '</tr>'
     )
