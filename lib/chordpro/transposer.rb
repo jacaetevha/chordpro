@@ -5,9 +5,10 @@ module Chordpro
   #   transposed_song = Chordpro::Transposer.new(song, 3).visit
   #
   class Transposer
-    def initialize(song, interval)
+    def initialize(song, interval, key: nil)
       @song = song
       @interval = interval
+      @key = key
     end
 
     def visit
@@ -15,7 +16,7 @@ module Chordpro
     end
 
     def chord(chord)
-      chord.transpose(@interval)
+      chord.transpose(@interval, key: @key)
     end
   end
 end
