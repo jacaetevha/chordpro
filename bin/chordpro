@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'rubygems'
+require 'chordpro'
+require 'optparse'
+
+$color_supported = true
+begin
+  require 'Win32/Console/ANSI' if RUBY_DESCRIPTION =~ /(mswin|mingw)/
+rescue LoadError
+  warn 'You must "gem install win32console" to use color on Windows -- all output will be plain jane'
+  $color_supported = false
+end
+
+def colorize(text, color_code)
+  $color_supported ? "#{color_code}#{text}\e[0m" : text
+end
+
+def green(text)
+  colorize(text, "\e[32m")
+end
+
+def red(text)
+  colorize(text, "\e[31m")
+end
+
+def yellow(text)
+  colorize(text, "\e[1;33m")
+end
+
+options = {
+  action: 'to-html',
+  input: nil,
+  output: nil
+}
+parser = OptionParser.new do |parser|
+  parser.banner = yellow "Usage: #{$PROGRAM_NAME} [action: (to-html|to-pdf)] [input] output\n\n"
+
+  parser.on('-h', '--help', 'Show this help message') do
+    puts parser
+    exit 0
+  end
+
+  parser.separator ''
+  parser.on('-a', '--action [to-html|to-pdf]', 'the type of action to perform (defaults to to-html)') do |v|
+    options[:action] = v || 'to-html'
+  end
+  parser.on('-i', '--input-file PATH', 'input file name, if not given STDIN will be read') do |v|
+    options[:input] = v
+  end
+  parser.on('-o', '--output-file PATH', 'output file name (required); if "-" is given output to STDOUT') do |v|
+    options[:output] = v
+  end
+end
+parser.parse!
+
+action = options[:action]
+if action != 'to-html' && action != 'to-pdf'
+  if action.nil? || action.empty?
+    warn "\n#{red 'An action is required'}\n"
+  else
+    warn "\n#{red "Invalid action: #{action}"}\n\n"
+  end
+  warn parser.help
+end
+
+song = options[:input] ? File.read(input) : STDIN.tty? ? '' : STDIN.read
+if song.empty?
+  warn "\n#{red 'No input found. Pass a filename or pipe content to STDIN.'}\n"
+  warn parser.help
+end
+
+if options[:output].nil? || options[:output].empty?
+  warn "\n#{red 'No valid output file found.'}\n"
+  warn parser.help
+  exit!
+end
+
+options[:output] = STDOUT if options[:output].strip == '-'
+
+song = action == 'to-html' ? Chordpro.html(song) : "pretend there's a PDF coming now"
+
+if options[:output] == STDOUT
+  puts song
+else
+  File.open(options[:output], 'w') { |file| file << song }
+end
+
+green "check #{options[:output]}"
+exit!
