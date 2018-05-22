@@ -80,7 +80,29 @@ end
 
 options[:output] = STDOUT if options[:output].strip == '-'
 
-song = action == 'to-html' ? Chordpro.html(song) : "pretend there's a PDF coming now"
+if action == 'to-html'
+  css = %q(
+  <style type='text/css'>
+    body {
+      font-family: Menlo, Consolas, "Courier New", Courier, monospace;
+      font-size: 13px;
+      padding: 20px;
+    }
+
+    .comment {
+      color: #999;
+    }
+
+    .chords {
+      font-weight: bold;
+      color: blue;
+    }
+  </style>
+  )
+  song = "<html><head>#{css}</head><body>#{Chordpro.html(song)}</body></html>"
+else
+  "pretend there's a PDF coming now"
+end
 
 if options[:output] == STDOUT
   puts song
